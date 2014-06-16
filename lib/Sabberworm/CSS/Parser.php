@@ -393,7 +393,17 @@ class Parser {
 		} else if ($this->comes("'") || $this->comes('"')) {
 			$oValue = $this->parseStringValue();
 		} else {
-			$oValue = $this->parseIdentifier(true, false);
+			foreach (Color::$names as $sColorName => $aValues) {
+				if ($this->comes($sColorName)) {
+                    $this->consume($sColorName);
+					$aColor = array('r' => new Size(intval($aValues['red'], 16), null, true), 'g' => new Size(intval($aValues['green'], 16), null, true), 'b' => new Size(intval($aValues['blue'], 16), null, true));
+					$oValue = new Color($aColor);
+				}
+			}
+			
+			if (!$oValue) {
+				$oValue = $this->parseIdentifier(true, false);
+			}
 		}
 		$this->consumeWhiteSpace();
 		return $oValue;
